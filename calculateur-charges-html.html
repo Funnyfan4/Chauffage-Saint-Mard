@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Charges - Immeuble 4 Logements</title>
+    <style>
+        /* Styles généraux */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        h2 {
+            color: #444;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #555;
+        }
+        h4 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 0 10px;
+            border-bottom: 2px solid transparent;
+            color: #666;
+        }
+        .tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        .tab:hover:not(.active) {
+            color: #333;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 30px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .periode-box {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+        }
+        .periode-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        /* Formulaires */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 10px;
+        }
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 250px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-input:disabled {
+            background-color: #f5f5f5;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            margin-bottom: 20px;
+        }
+        th {
+            background-color: #f8f8f8;
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-weight: 600;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .table-right {
+            text-align: right;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #2563eb;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .btn-success {
+            background-color: #10b981;
+        }
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        /* Cartes de résultats */
+        .result-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .result-card {
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .studio-avant {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .studio-arriere {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .maison-gauche {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .maison-droite {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        .total-cards .studio-avant {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        .total-cards .studio-arriere {
+            background-color: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        .total-cards .maison-gauche {
+            background-color: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+        .total-cards .maison-droite {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        /* Utilitaires */
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .font-bold {
+            font-weight: 700;
+        }
+        .flex {
+            display: flex;
+        }
+        .justify-end {
+            justify-content: flex-end;
+        }
+        .hidden {
+            display: none;
+        }
+
+        /* Impression */
+        @media print {
+            body, .container {
+                background-color: white;
+            }
+            .tabs, .btn:not(.print-hide) {
+                display: none;
+            }
+            .periode-box {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #eee;
+            }
+            .result-cards {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculateur de Charges - Immeuble 4 Logements</h1>
+        
+        <div class="tabs">
+            <div class="tab active" id="tab-saisie">Saisie des données</div>
+            <div class="tab" id="tab-resultats">Résultats</div>
+        </div>
+        
+        <div id="section-saisie">
+            <!-- Factures de Mazout -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Factures de Mazout</h2>
+                    <button class="btn" id="btn-add-mazout">+ Ajouter</button>
+                </div>
+                <div class="table-wrap">
+                    <table id="table-mazout">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant TTC (€)</th>
+                                <th>Volume (litres)</th>
+                                <th>Prix unitaire (€/L)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-id="1">
+                                <td><input type="date" class="form-input" name="date" value="2025-01-15"></td>
+                                <td><input type="number" class="form-input" name="montant" value="1200"></td>
+                                <td><input type="number" class="form-input" name="volume" value="1000"></td>
+                                <td class="prix-unitaire">1.200</td>
+                                <td><button class="btn btn-danger btn-sm btn-delete">Supprimer</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Factures d'Eau Chaude -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Factures d'Eau Chaude</h2>
+                    <button class="btn" id="btn-add-eau">+ Ajouter</button>
+                </div>
+                <div class="table-wrap">
+                    <table id="table-eau">
+                        <thead>
+                            <tr>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Montant TTC (€)</th>
+                                <th>Volume (m³)</th>
+                                <th>Prix unitaire (€/m³)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-id="1">
+                                <td><input type="date" class="form-input" name="dateDebut" value="2025-01-01"></td>
+                                <td><input type="date" class="form-input" name="dateFin" value="2025-01-31"></td>
+                                <td><input type="number" class="form-input" name="montant" value="150"></td>
+                                <td><input type="number" class="form-input" name="volume" value="30"></td>
+                                <td class="prix-unitaire">5.00</td>
+                                <td><button class="btn btn-danger btn-sm btn-delete">Supprimer</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Charges Fixes Annuelles -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Charges Fixes Annuelles</h2>
+                    <button class="btn" id="btn-add-charges">+ Ajouter</button>
+                </div>
+                <div class="table-wrap">
+                    <table id="table-charges">
+                        <thead>
+                            <tr>
+                                <th>Poste</th>
+                                <th>Montant TTC (€)</th>
+                                <th>Nombre de Logements</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-id="1">
+                                <td><input type="text" class="form-input" name="poste" value="Entretien chaudière"></td>
+                                <td><input type="number" class="form-input" name="montant" value="400"></td>
+                                <td><input type="number" class="form-input" name="nombreLogements" min="1" max="4" value="4"></td>
+                                <td><button class="btn btn-danger btn-sm btn-delete">Supprimer</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Relevés Périodiques -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>Relevés Périodiques</h2>
+                    <button class="btn" id="btn-add-periode">+ Ajouter période</button>
+                </div>
+                
+                <div id="periodes-container">
+                    <div class="periode-box" data-id="1">
+                        <div class="periode-header">
+                            <h3>Période 1</h3>
+                            <button class="btn btn-danger btn-sm btn-delete-periode">Supprimer</button>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Date début</label>
+                                    <input type="date" class="form-input" name="dateDebut" value="2025-01-01">
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="form-label">Date fin</label>
+                                    <input type="date" class="form-input" name="dateFin" value="2025-01-31">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h4>Studio Avant</h4>
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Index début ECS</label>
+                                <input type="number" class="form-input" name="studioAvant.indexDebutECS" value="100">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin ECS</label>
+                                <input type="number" class="form-input" name="studioAvant.indexFinECS" value="110">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. ECS</label>
+                                <input type="text" class="form-input" name="studioAvant.consoECS" value="10.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début eau froide</label>
+                                <input type="number" class="form-input" name="studioAvant.indexDebutEauFroide" value="200">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin eau froide</label>
+                                <input type="number" class="form-input" name="studioAvant.indexFinEauFroide" value="210">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. eau froide</label>
+                                <input type="text" class="form-input" name="studioAvant.consoEauFroide" value="10.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début chauffage</label>
+                                <input type="number" class="form-input" name="studioAvant.indexDebutChauffage" value="300">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin chauffage</label>
+                                <input type="number" class="form-input" name="studioAvant.indexFinChauffage" value="320">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. chauffage</label>
+                                <input type="text" class="form-input" name="studioAvant.consoChauffage" value="20.00" disabled>
+                            </div>
+                        </div>
+                        
+                        <h4>Studio Arrière</h4>
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Index début ECS</label>
+                                <input type="number" class="form-input" name="studioArriere.indexDebutECS" value="150">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin ECS</label>
+                                <input type="number" class="form-input" name="studioArriere.indexFinECS" value="160">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. ECS</label>
+                                <input type="text" class="form-input" name="studioArriere.consoECS" value="10.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début eau froide</label>
+                                <input type="number" class="form-input" name="studioArriere.indexDebutEauFroide" value="250">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin eau froide</label>
+                                <input type="number" class="form-input" name="studioArriere.indexFinEauFroide" value="260">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. eau froide</label>
+                                <input type="text" class="form-input" name="studioArriere.consoEauFroide" value="10.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début chauffage</label>
+                                <input type="number" class="form-input" name="studioArriere.indexDebutChauffage" value="350">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin chauffage</label>
+                                <input type="number" class="form-input" name="studioArriere.indexFinChauffage" value="370">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. chauffage</label>
+                                <input type="text" class="form-input" name="studioArriere.consoChauffage" value="20.00" disabled>
+                            </div>
+                        </div>
+                        
+                        <h4>Maison Gauche</h4>
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Index début ECS</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexDebutECS" value="200">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin ECS</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexFinECS" value="220">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. ECS</label>
+                                <input type="text" class="form-input" name="maisonGauche.consoECS" value="20.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début eau froide</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexDebutEauFroide" value="300">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin eau froide</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexFinEauFroide" value="320">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. eau froide</label>
+                                <input type="text" class="form-input" name="maisonGauche.consoEauFroide" value="20.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début chauffage sol</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexDebutChauffageSol" value="400">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin chauffage sol</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexFinChauffageSol" value="430">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. chauffage sol</label>
+                                <input type="text" class="form-input" name="maisonGauche.consoChauffageSol" value="30.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début radiateurs</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexDebutRadiateurs" value="500">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin radiateurs</label>
+                                <input type="number" class="form-input" name="maisonGauche.indexFinRadiateurs" value="530">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. radiateurs</label>
+                                <input type="text" class="form-input" name="maisonGauche.consoRadiateurs" value="30.00" disabled>
+                            </div>
+                        </div>
+                        
+                        <h4>Maison Droite</h4>
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Index début ECS</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexDebutECS" value="250">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin ECS</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexFinECS" value="270">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. ECS</label>
+                                <input type="text" class="form-input" name="maisonDroite.consoECS" value="20.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début eau froide</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexDebutEauFroide" value="350">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin eau froide</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexFinEauFroide" value="370">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. eau froide</label>
+                                <input type="text" class="form-input" name="maisonDroite.consoEauFroide" value="20.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début chauffage sol</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexDebutChauffageSol" value="450">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin chauffage sol</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexFinChauffageSol" value="480">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. chauffage sol</label>
+                                <input type="text" class="form-input" name="maisonDroite.consoChauffageSol" value="30.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début radiateurs</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexDebutRadiateurs" value="550">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin radiateurs</label>
+                                <input type="number" class="form-input" name="maisonDroite.indexFinRadiateurs" value="580">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. radiateurs</label>
+                                <input type="text" class="form-input" name="maisonDroite.consoRadiateurs" value="30.00" disabled>
+                            </div>
+                        </div>
+                        
+                        <h4>Boiler & Chaudière</h4>
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Index début boiler</label>
+                                <input type="number" class="form-input" name="boiler.indexDebut" value="1000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin boiler</label>
+                                <input type="number" class="form-input" name="boiler.indexFin" value="1080">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. boiler</label>
+                                <input type="text" class="form-input" name="boiler.conso" value="80.00" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index début mazout</label>
+                                <input type="number" class="form-input" name="chaudiereMazout.indexDebut" value="5000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Index fin mazout</label>
+                                <input type="number" class="form-input" name="chaudiereMazout.indexFin" value="5200">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Conso. mazout</label>
+                                <input type="text" class="form-input" name="chaudiereMazout.conso" value="200.00" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="section-resultats" class="hidden">
+            <div class="mb-4 flex justify-end">
+                <button class="btn btn-success" id="btn-imprimer">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    Imprimer
+                </button>
+            </div>
+            
+            <div id="resultats-container" class="periode-box print:border-none"></div>
+        </div>
+    </div>
+
+    <script>
+        // Données de l'application
+        let facturesMazout = [
+            { id: 1, date: '2025-01-15', montant: 1200, volume: 1000 }
+        ];
+        
+        let facturesEauChaude = [
+            { id: 1, dateDebut: '2025-01-01', dateFin: '2025-01-31', montant: 150, volume: 30 }
+        ];
+        
+        let chargesFixesAnnuelles = [
+            { id: 1, poste: 'Entretien chaudière', montant: 400, nombreLogements: 4 }
+        ];
+        
+        let releves = {
+            periodes: [
+                {
+                    id: 1,
+                    dateDebut: '2025-01-01',
+                    dateFin: '2025-01-31',
+                    logements: {
+                        studioAvant: { 
+                            indexDebutECS: 100, indexFinECS: 110, 
+                            indexDebutEauFroide: 200, indexFinEauFroide: 210, 
+                            indexDebutChauffage: 300, indexFinChauffage: 320 
+                        },
+                        studioArriere: { 
+                            indexDebutECS: 150, indexFinECS: 160, 
+                            indexDebutEauFroide: 250, indexFinEauFroide: 260, 
+                            indexDebutChauffage: 350, indexFinChauffage: 370 
+                        },
+                        maisonGauche: { 
+                            indexDebutECS: 200, indexFinECS: 220, 
+                            indexDebutEauFroide: 300, indexFinEauFroide: 320, 
+                            indexDebutChauffageSol: 400, indexFinChauffageSol: 430,
+                            indexDebutRadiateurs: 500, indexFinRadiateurs: 530
+                        },
+                        maisonDroite: { 
+                            indexDebutECS: 250, indexFinECS: 270, 
+                            indexDebutEauFroide: 350, indexFinEauFroide: 370, 
+                            indexDebutChauffageSol: 450, indexFinChauffageSol: 480,
+                            indexDebutRadiateurs: 550, indexFinRadiateurs: 580
+                        },
+                    },
+                    boiler: { indexDebut: 1000, indexFin: 1080 },
+                    chaudiereMazout: { indexDebut: 5000, indexFin: 5200 }
+                }
+            ]
+        };
+        
+        let resultats = {};
+        
+        // Fonction pour calculer les charges
+        function calculerCharges() {
+            const resultatsCalcules = {
+                periodes: [],
+                totauxParLogement: {
+                    studioAvant: 0,
+                    studioArriere: 0,
+                    maisonGauche: 0,
+                    maisonDroite: 0
+                }
+            };
+            
+            // Pour chaque période de relevés
+            releves.periodes.forEach(periode => {
+                // 1. Calculer les consommations par logement
+                const consommations = {
+                    studioAvant: {
+                        ecs: periode.logements.studioAvant.indexFinECS - periode.logements.studioAvant.indexDebutECS,
+                        eauFroide: periode.logements.studioAvant.indexFinEauFroide - periode.logements.studioAvant.indexDebutEauFroide,
+                        chauffage: periode.logements.studioAvant.indexFinChauffage - periode.logements.studioAvant.indexDebutChauffage
+                    },
+                    studioArriere: {
+                        ecs: periode.logements.studioArriere.indexFinECS - periode.logements.studioArriere.indexDebutECS,
+                        eauFroide: periode.logements.studioArriere.indexFinEauFroide - periode.logements.studioArriere.indexDebutEauFroide,
+                        chauffage: periode.logements.studioArriere.indexFinChauffage - periode.logements.studioArriere.indexDebutChauffage
+                    },
+                    maisonGauche: {
+                        ecs: periode.logements.maisonGauche.indexFinECS - periode.logements.maisonGauche.indexDebutECS,
+                        eauFroide: periode.logements.maisonGauche.indexFinEauFroide - periode.logements.maisonGauche.indexDebutEauFroide,
+                        chauffageSol: periode.logements.maisonGauche.indexFinChauffageSol - periode.logements.maisonGauche.indexDebutChauffageSol,
+                        radiateurs: periode.logements.maisonGauche.indexFinRadiateurs - periode.logements.maisonGauche.indexDebutRadiateurs,
+                        chauffageTotal: (periode.logements.maisonGauche.indexFinChauffageSol - periode.logements.maisonGauche.indexDebutChauffageSol) +
+                                    (periode.logements.maisonGauche.indexFinRadiateurs - periode.logements.maisonGauche.indexDebutRadiateurs)
+                    },
+                    maisonDroite: {
+                        ecs: periode.logements.maisonDroite.indexFinECS - periode.logements.maisonDroite.indexDebutECS,
+                        eauFroide: periode.logements.maisonDroite.indexFinEauFroide - periode.logements.maisonDroite.indexDebutEauFroide,
+                        chauffageSol: periode.logements.maisonDroite.indexFinChauffageSol - periode.logements.maisonDroite.indexDebutChauffageSol,
+                        radiateurs: periode.logements.maisonDroite.indexFinRadiateurs - periode.logements.maisonDroite.indexDebutRadiateurs,
+                        chauffageTotal: (periode.logements.maisonDroite.indexFinChauffageSol - periode.logements.maisonDroite.indexDebutChauffageSol) +
+                                    (periode.logements.maisonDroite.indexFinRadiateurs - periode.logements.maisonDroite.indexDebutRadiateurs)
+                    },
+                    boiler: periode.boiler.indexFin - periode.boiler.indexDebut,
+                    chaudiereMazout: periode.chaudiereMazout.indexFin - periode.chaudiereMazout.indexDebut
+                };
+                
+                // 2. Calculer consommation totale de chauffage
+                const consommationTotaleChauffage = 
+                    consommations.studioAvant.chauffage + 
+                    consommations.studioArriere.chauffage + 
+                    consommations.maisonGauche.chauffageTotal + 
+                    consommations.maisonDroite.chauffageTotal;
+                
+                // 3. Calculer consommation totale d'ECS
+                const consommationTotaleECS = 
+                    consommations.studioAvant.ecs + 
+                    consommations.studioArriere.ecs + 
+                    consommations.maisonGauche.ecs + 
+                    consommations.maisonDroite.ecs;
+                
+                // 4. Trouver les factures de mazout applicables à cette période
+                const dateDebut = new Date(periode.dateDebut);
+                const dateFin = new Date(periode.dateFin);
+                
+                const facturesApplicables = facturesMazout.filter(facture => {
+                    const dateFact = new Date(facture.date);
+                    return dateFact >= dateDebut && dateFact <= dateFin;
+                });
+                
+                // 5. Calculer le prix unitaire moyen pondéré du mazout
+                let prixUnitaireMoyen = 0;
+                if (facturesApplicables.length > 0) {
+                    let totalMontant = 0;
+                    let totalVolume = 0;
+                    
+                    facturesApplicables.forEach(facture => {
+                        totalMontant += facture.montant;
+                        totalVolume += facture.volume;
+                    });
+                    
+                    prixUnitaireMoyen = totalVolume > 0 ? totalMontant / totalVolume : 0;
+                } else if (facturesMazout.length > 0) {
+                    // Si pas de facture dans la période, prendre le dernier prix connu
+                    const derniereFact = facturesMazout[facturesMazout.length - 1];
+                    prixUnitaireMoyen = derniereFact.volume > 0 ? derniereFact.montant / derniereFact.volume : 0;
+                }
+                
+                // 6. Calculer le coût variable de la période
+                const coutVariable = consommations.chaudiereMazout * prixUnitaireMoyen;
+                
+                // 7. Calculer le coût fixe journalier et pour la période
+                const totalChargesFixesAnnuelles = chargesFixesAnnuelles.reduce((sum, charge) => sum + charge.montant, 0);
+                const coutFixeJournalier = totalChargesFixesAnnuelles / 365;
+                
+                // Calculer nombre de jours dans la période
+                const diffTime = Math.abs(dateFin - dateDebut);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 pour inclure le jour de fin
+                
+                const coutFixePeriode = coutFixeJournalier * diffDays;
+                
+                // 8. Calculer le coût total de la période
+                const coutTotalPeriode = coutVariable + coutFixePeriode;
+                
+                // 9. Calculer le prix unitaire moyen pour la période
+                const prixUnitaireMoyenPeriode = consommationTotaleChauffage > 0 ? 
+                    coutTotalPeriode / consommationTotaleChauffage : 0;
+                
+                // 10. Calculer les montants dus par appartement
+                const montantStudioAvant = consommations.studioAvant.chauffage * prixUnitaireMoyenPeriode;
+                const montantStudioArriere = consommations.studioArriere.chauffage * prixUnitaireMoyenPeriode;
+                const montantMaisonGauche = consommations.maisonGauche.chauffageTotal * prixUnitaireMoyenPeriode;
+                const montantMaisonDroite = consommations.maisonDroite.chauffageTotal * prixUnitaireMoyenPeriode;
+                
+                // Ajouter les résultats de cette période
+                resultatsCalcules.periodes.push({
+                    id: periode.id,
+                    dateDebut: periode.dateDebut,
+                    dateFin: periode.dateFin,
+                    prixUnitaireMazout: prixUnitaireMoyen.toFixed(3),
+                    consommations: consommations,
+                    consommationTotaleChauffage: consommationTotaleChauffage,
+                    consommationTotaleECS: consommationTotaleECS,
+                    coutVariable: coutVariable.toFixed(2),
+                    coutFixePeriode: coutFixePeriode.toFixed(2),
+                    coutTotalPeriode: coutTotalPeriode.toFixed(2),
+                    prixUnitaireMoyenPeriode: prixUnitaireMoyenPeriode.toFixed(4),
+                    montants: {
+                        studioAvant: montantStudioAvant.toFixed(2),
+                        studioArriere: montantStudioArriere.toFixed(2),
+                        maisonGauche: montantMaisonGauche.toFixed(2),
+                        maisonDroite: montantMaisonDroite.toFixed(2)
+                    }
+                });
+                
+                // Cumuler les totaux par logement
+                resultatsCalcules.totauxParLogement.studioAvant += montantStudioAvant;
+                resultatsCalcules.totauxParLogement.studioArriere += montantStudioArriere;
+                resultatsCalcules.totauxParLogement.maisonGauche += montantMaisonGauche;
+                resultatsCalcules.totauxParLogement.maisonDroite += montantMaisonDroite;
+            });
+            
+            resultats = resultatsCalcules;
+            afficherResultats();
+        }
+        
+        // Fonction pour afficher les résultats
+        function afficherResultats() {
+            const container = document.getElementById('resultats-container');
+            container.innerHTML = '';
+            
+            if (!resultats.periodes || resultats.periodes.length === 0) {
+                container.innerHTML = '<p>Aucun résultat disponible. Veuillez saisir des données.</p>';
+                return;
+            }
+            
+            let html = '<h2 class="text-xl font-semibold mb-4">Récapitulatif des charges</h2>';
+            
+            // Afficher les résultats par période
+            resultats.periodes.forEach(periode => {
+                const dateDebut = new Date(periode.dateDebut).toLocaleDateString();
+                const dateFin = new Date(periode.dateFin).toLocaleDateString();
+                
+                html += `
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold mb-2">
+                            Période ${periode.id}: ${dateDebut} au ${dateFin}
+                        </h3>
+                        
+                        <div class="grid-cols-2 gap-6 mb-4" style="display: grid;">
+                            <div>
+                                <h4 class="font-medium mb-2">Consommations</h4>
+                                <table class="min-w-full border border-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="py-2 px-3 border-b text-left">Logement</th>
+                                            <th class="py-2 px-3 border-b text-right">ECS</th>
+                                            <th class="py-2 px-3 border-b text-right">Eau Froide</th>
+                                            <th class="py-2 px-3 border-b text-right">Chauffage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Studio Avant</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.studioAvant.ecs.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.studioAvant.eauFroide.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.studioAvant.chauffage.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Studio Arrière</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.studioArriere.ecs.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.studioArriere.eauFroide.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.studioArriere.chauffage.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Maison Gauche</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.maisonGauche.ecs.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.maisonGauche.eauFroide.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.maisonGauche.chauffageTotal.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Maison Droite</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.maisonDroite.ecs.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.maisonDroite.eauFroide.toFixed(2)}</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.maisonDroite.chauffageTotal.toFixed(2)}</td>
+                                        </tr>
+                                        <tr class="font-medium bg-gray-50">
+                                            <td class="py-2 px-3">Total</td>
+                                            <td class="py-2 px-3 text-right">${periode.consommationTotaleECS.toFixed(2)}</td>
+                                            <td class="py-2 px-3 text-right">-</td>
+                                            <td class="py-2 px-3 text-right">${periode.consommationTotaleChauffage.toFixed(2)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-medium mb-2">Coûts et Prix Unitaires</h4>
+                                <table class="min-w-full border border-gray-200">
+                                    <tbody>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Prix unitaire mazout</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.prixUnitaireMazout} €/litre</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Consommation mazout</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.consommations.chaudiereMazout.toFixed(2)} litres</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Coût variable</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.coutVariable} €</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Coût fixe période</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.coutFixePeriode} €</td>
+                                        </tr>
+                                        <tr class="font-medium">
+                                            <td class="py-2 px-3 border-b">Coût total période</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.coutTotalPeriode} €</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 px-3 border-b">Prix unitaire moyen</td>
+                                            <td class="py-2 px-3 border-b text-right">${periode.prixUnitaireMoyenPeriode} €/kWh</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <h4 class="font-medium mb-2">Montants dus par logement pour cette période</h4>
+                        <div class="result-cards">
+                            <div class="result-card studio-avant">
+                                <div class="result-title">Studio Avant</div>
+                                <div class="result-value">${periode.montants.studioAvant} €</div>
+                            </div>
+                            <div class="result-card studio-arriere">
+                                <div class="result-title">Studio Arrière</div>
+                                <div class="result-value">${periode.montants.studioArriere} €</div>
+                            </div>
+                            <div class="result-card maison-gauche">
+                                <div class="result-title">Maison Gauche</div>
+                                <div class="result-value">${periode.montants.maisonGauche} €</div>
+                            </div>
+                            <div class="result-card maison-droite">
+                                <div class="result-title">Maison Droite</div>
+                                <div class="result-value">${periode.montants.maisonDroite} €</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Afficher les totaux
+            html += `
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold mb-4">Totaux à payer</h3>
+                    
+                    <div class="result-cards total-cards">
+                        <div class="result-card studio-avant">
+                            <div class="result-title">Studio Avant</div>
+                            <div class="result-value">${resultats.totauxParLogement.studioAvant.toFixed(2)} €</div>
+                        </div>
+                        <div class="result-card studio-arriere">
+                            <div class="result-title">Studio Arrière</div>
+                            <div class="result-value">${resultats.totauxParLogement.studioArriere.toFixed(2)} €</div>
+                        </div>
+                        <div class="result-card maison-gauche">
+                            <div class="result-title">Maison Gauche</div>
+                            <div class="result-value">${resultats.totauxParLogement.maisonGauche.toFixed(2)} €</div>
+                        </div>
+                        <div class="result-card maison-droite">
+                            <div class="result-title">Maison Droite</div>
+                            <div class="result-value">${resultats.totauxParLogement.maisonDroite.toFixed(2)} €</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        // Fonction pour mettre à jour les consommations calculées
+        function updateConsommations() {
+            document.querySelectorAll('.periode-box').forEach(periodeBox => {
+                const periodeId = parseInt(periodeBox.getAttribute('data-id'));
+                const periode = releves.periodes.find(p => p.id === periodeId);
+                
+                if (!periode) return;
+                
+                // Studio Avant
+                periodeBox.querySelector('[name="studioAvant.consoECS"]').value = 
+                    (periode.logements.studioAvant.indexFinECS - periode.logements.studioAvant.indexDebutECS).toFixed(2);
+                periodeBox.querySelector('[name="studioAvant.consoEauFroide"]').value = 
+                    (periode.logements.studioAvant.indexFinEauFroide - periode.logements.studioAvant.indexDebutEauFroide).toFixed(2);
+                periodeBox.querySelector('[name="studioAvant.consoChauffage"]').value = 
+                    (periode.logements.studioAvant.indexFinChauffage - periode.logements.studioAvant.indexDebutChauffage).toFixed(2);
+                
+                // Studio Arrière
+                periodeBox.querySelector('[name="studioArriere.consoECS"]').value = 
+                    (periode.logements.studioArriere.indexFinECS - periode.logements.studioArriere.indexDebutECS).toFixed(2);
+                periodeBox.querySelector('[name="studioArriere.consoEauFroide"]').value = 
+                    (periode.logements.studioArriere.indexFinEauFroide - periode.logements.studioArriere.indexDebutEauFroide).toFixed(2);
+                periodeBox.querySelector('[name="studioArriere.consoChauffage"]').value = 
+                    (periode.logements.studioArriere.indexFinChauffage - periode.logements.studioArriere.indexDebutChauffage).toFixed(2);
+                
+                // Maison Gauche
+                periodeBox.querySelector('[name="maisonGauche.consoECS"]').value = 
+                    (periode.logements.maisonGauche.indexFinECS - periode.logements.maisonGauche.indexDebutECS).toFixed(2);
+                periodeBox.querySelector('[name="maisonGauche.consoEauFroide"]').value = 
+                    (periode.logements.maisonGauche.indexFinEauFroide - periode.logements.maisonGauche.indexDebutEauFroide).toFixed(2);
+                periodeBox.querySelector('[name="maisonGauche.consoChauffageSol"]').value = 
+                    (periode.logements.maisonGauche.indexFinChauffageSol - periode.logements.maisonGauche.indexDebutChauffageSol).toFixed(2);
+                periodeBox.querySelector('[name="maisonGauche.consoRadiateurs"]').value = 
+                    (periode.logements.maisonGauche.indexFinRadiateurs - periode.logements.maisonGauche.indexDebutRadiateurs).toFixed(2);
+                
+                // Maison Droite
+                periodeBox.querySelector('[name="maisonDroite.consoECS"]').value = 
+                    (periode.logements.maisonDroite.indexFinECS - periode.logements.maisonDroite.indexDebutECS).toFixed(2);
+                periodeBox.querySelector('[name="maisonDroite.consoEauFroide"]').value = 
+                    (periode.logements.maisonDroite.indexFinEauFroide - periode.logements.maisonDroite.indexDebutEauFroide).toFixed(2);
+                periodeBox.querySelector('[name="maisonDroite.consoChauffageSol"]').value = 
+                    (periode.logements.maisonDroite.indexFinChauffageSol - periode.logements.maisonDroite.indexDebutChauffageSol).toFixed(2);
+                periodeBox.querySelector('[name="maisonDroite.consoRadiateurs"]').value = 
+                    (periode.logements.maisonDroite.indexFinRadiateurs - periode.logements.maisonDroite.indexDebutRadiateurs).toFixed(2);
+                
+                // Boiler & Chaudière
+                periodeBox.querySelector('[name="boiler.conso"]').value = 
+                    (periode.boiler.indexFin - periode.boiler.indexDebut).toFixed(2);
+                periodeBox.querySelector('[name="chaudiereMazout.conso"]').value = 
+                    (periode.chaudiereMazout.indexFin - periode.chaudiereMazout.indexDebut).toFixed(2);
+            });
+        }
+        
+        // Fonction pour mettre à jour les prix unitaires
+        function updatePrixUnitaires() {
+            // Mazout
+            document.querySelectorAll('#table-mazout tbody tr').forEach(row => {
+                const montant = parseFloat(row.querySelector('[name="montant"]').value) || 0;
+                const volume = parseFloat(row.querySelector('[name="volume"]').value) || 0;
+                const prixUnitaire = volume > 0 ? montant / volume : 0;
+                row.querySelector('.prix-unitaire').textContent = prixUnitaire.toFixed(3);
+            });
+            
+            // Eau Chaude
+            document.querySelectorAll('#table-eau tbody tr').forEach(row => {
+                const montant = parseFloat(row.querySelector('[name="montant"]').value) || 0;
+                const volume = parseFloat(row.querySelector('[name="volume"]').value) || 0;
+                const prixUnitaire = volume > 0 ? montant / volume : 0;
+                row.querySelector('.prix-unitaire').textContent = prixUnitaire.toFixed(2);
+            });
+        }
+        
+        // Fonction pour collecter les données depuis le formulaire
+        function collectFormData() {
+            // Factures de mazout
+            facturesMazout = [];
+            document.querySelectorAll('#table-mazout tbody tr').forEach(row => {
+                const id = parseInt(row.getAttribute('data-id'));
+                const date = row.querySelector('[name="date"]').value;
+                const montant = parseFloat(row.querySelector('[name="montant"]').value) || 0;
+                const volume = parseFloat(row.querySelector('[name="volume"]').value) || 0;
+                
+                facturesMazout.push({ id, date, montant, volume });
+            });
+            
+            // Factures d'eau chaude
+            facturesEauChaude = [];
+            document.querySelectorAll('#table-eau tbody tr').forEach(row => {
+                const id = parseInt(row.getAttribute('data-id'));
+                const dateDebut = row.querySelector('[name="dateDebut"]').value;
+                const dateFin = row.querySelector('[name="dateFin"]').value;
+                const montant = parseFloat(row.querySelector('[name="montant"]').value) || 0;
+                const volume = parseFloat(row.querySelector('[name="volume"]').value) || 0;
+                
+                facturesEauChaude.push({ id, dateDebut, dateFin, montant, volume });
+            });
+            
+            // Charges fixes
+            chargesFixesAnnuelles = [];
+            document.querySelectorAll('#table-charges tbody tr').forEach(row => {
+                const id = parseInt(row.getAttribute('data-id'));
+                const poste = row.querySelector('[name="poste"]').value;
+                const montant = parseFloat(row.querySelector('[name="montant"]').value) || 0;
+                const nombreLogements = parseInt(row.querySelector('[name="nombreLogements"]').value) || 4;
+                
+                chargesFixesAnnuelles.push({ id, poste, montant, nombreLogements });
+            });
+            
+            // Périodes et relevés
+            releves.periodes = [];
+            document.querySelectorAll('.periode-box').forEach(periodeBox => {
+                const id = parseInt(periodeBox.getAttribute('data-id'));
+                const dateDebut = periodeBox.querySelector('[name="dateDebut"]').value;
+                const dateFin = periodeBox.querySelector('[name="dateFin"]').value;
+                
+                // Studio Avant
+                const studioAvant = {
+                    indexDebutECS: parseFloat(periodeBox.querySelector('[name="studioAvant.indexDebutECS"]').value) || 0,
+                    indexFinECS: parseFloat(periodeBox.querySelector('[name="studioAvant.indexFinECS"]').value) || 0,
+                    indexDebutEauFroide: parseFloat(periodeBox.querySelector('[name="studioAvant.indexDebutEauFroide"]').value) || 0,
+                    indexFinEauFroide: parseFloat(periodeBox.querySelector('[name="studioAvant.indexFinEauFroide"]').value) || 0,
+                    indexDebutChauffage: parseFloat(periodeBox.querySelector('[name="studioAvant.indexDebutChauffage"]').value) || 0,
+                    indexFinChauffage: parseFloat(periodeBox.querySelector('[name="studioAvant.indexFinChauffage"]').value) || 0
+                };
+                
+                // Studio Arrière
+                const studioArriere = {
+                    indexDebutECS: parseFloat(periodeBox.querySelector('[name="studioArriere.indexDebutECS"]').value) || 0,
+                    indexFinECS: parseFloat(periodeBox.querySelector('[name="studioArriere.indexFinECS"]').value) || 0,
+                    indexDebutEauFroide: parseFloat(periodeBox.querySelector('[name="studioArriere.indexDebutEauFroide"]').value) || 0,
+                    indexFinEauFroide: parseFloat(periodeBox.querySelector('[name="studioArriere.indexFinEauFroide"]').value) || 0,
+                    indexDebutChauffage: parseFloat(periodeBox.querySelector('[name="studioArriere.indexDebutChauffage"]').value) || 0,
+                    indexFinChauffage: parseFloat(periodeBox.querySelector('[name="studioArriere.indexFinChauffage"]').value) || 0
+                };
+                
+                // Maison Gauche
+                const maisonGauche = {
+                    indexDebutECS: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexDebutECS"]').value) || 0,
+                    indexFinECS: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexFinECS"]').value) || 0,
+                    indexDebutEauFroide: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexDebutEauFroide"]').value) || 0,
+                    indexFinEauFroide: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexFinEauFroide"]').value) || 0,
+                    indexDebutChauffageSol: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexDebutChauffageSol"]').value) || 0,
+                    indexFinChauffageSol: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexFinChauffageSol"]').value) || 0,
+                    indexDebutRadiateurs: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexDebutRadiateurs"]').value) || 0,
+                    indexFinRadiateurs: parseFloat(periodeBox.querySelector('[name="maisonGauche.indexFinRadiateurs"]').value) || 0
+                };
+                
+                // Maison Droite
+                const maisonDroite = {
+                    indexDebutECS: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexDebutECS"]').value) || 0,
+                    indexFinECS: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexFinECS"]').value) || 0,
+                    indexDebutEauFroide: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexDebutEauFroide"]').value) || 0,
+                    indexFinEauFroide: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexFinEauFroide"]').value) || 0,
+                    indexDebutChauffageSol: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexDebutChauffageSol"]').value) || 0,
+                    indexFinChauffageSol: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexFinChauffageSol"]').value) || 0,
+                    indexDebutRadiateurs: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexDebutRadiateurs"]').value) || 0,
+                    indexFinRadiateurs: parseFloat(periodeBox.querySelector('[name="maisonDroite.indexFinRadiateurs"]').value) || 0
+                };
+                
+                // Boiler & Chaudière
+                const boiler = {
+                    indexDebut: parseFloat(periodeBox.querySelector('[name="boiler.indexDebut"]').value) || 0,
+                    indexFin: parseFloat(periodeBox.querySelector('[name="boiler.indexFin"]').value) || 0
+                };
+                
+                const chaudiereMazout = {
+                    indexDebut: parseFloat(periodeBox.querySelector('[name="chaudiereMazout.indexDebut"]').value) || 0,
+                    indexFin: parseFloat(periodeBox.querySelector('[name="chaudiereMazout.indexFin"]').value) || 0
+                };
+                
+                releves.periodes.push({
+                    id,
+                    dateDebut,
+                    dateFin,
+                    logements: {
+                        studioAvant,
+                        studioArriere,
+                        maisonGauche,
+                        maisonDroite
+                    },
+                    boiler,
+                    chaudiereMazout
+                });
+            });
+        }
+        
+        // Fonction pour ajouter une nouvelle facture de mazout
+        function ajouterFactureMazout() {
+            const tableBody = document.querySelector('#table-mazout tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            const newId = rows.length > 0 ? Math.max(...Array.from(rows).map(row => parseInt(row.getAttribute('data-id')))) + 1 : 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-id', newId);
+            newRow.innerHTML = `
+                <td><input type="date" class="form-input" name="date"></td>
+                <td><input type="number" class="form-input" name="montant" value="0"></td>
+                <td><input type="number" class="form-input" name="volume" value="0"></td>
+                <td class="prix-unitaire">0.000</td>
+                <td><button class="btn btn-danger btn-sm btn-delete">Supprimer</button></td>
+            `;
+            
+            tableBody.appendChild(newRow);
+            attachEventListeners();
+        }
+        
+        // Fonction pour ajouter une nouvelle facture d'eau chaude
+        function ajouterFactureEauChaude() {
+            const tableBody = document.querySelector('#table-eau tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            const newId = rows.length > 0 ? Math.max(...Array.from(rows).map(row => parseInt(row.getAttribute('data-id')))) + 1 : 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-id', newId);
+            newRow.innerHTML = `
+                <td><input type="date" class="form-input" name="dateDebut"></td>
+                <td><input type="date" class="form-input" name="dateFin"></td>
+                <td><input type="number" class="form-input" name="montant" value="0"></td>
+                <td><input type="number" class="form-input" name="volume" value="0"></td>
+                <td class="prix-unitaire">0.00</td>
+                <td><button class="btn btn-danger btn-sm btn-delete">Supprimer</button></td>
+            `;
+            
+            tableBody.appendChild(newRow);
+            attachEventListeners();
+        }
+        
+        // Fonction pour ajouter une nouvelle charge fixe
+        function ajouterChargeFixes() {
+            const tableBody = document.querySelector('#table-charges tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            const newId = rows.length > 0 ? Math.max(...Array.from(rows).map(row => parseInt(row.getAttribute('data-id')))) + 1 : 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-id', newId);
+            newRow.innerHTML = `
+                <td><input type="text" class="form-input" name="poste"></td>
+                <td><input type="number" class="form-input" name="montant" value="0"></td>
+                <td><input type="number" class="form-input" name="nombreLogements" min="1" max="4" value="4"></td>
+                <td><button class="btn btn-danger btn-sm btn-delete">Supprimer</button></td>
+            `;
+            
+            tableBody.appendChild(newRow);
+            attachEventListeners();
+        }
+        
+        // Fonction pour ajouter une nouvelle période
+        function ajouterPeriode() {
+            const container = document.getElementById('periodes-container');
+            const periodes = container.querySelectorAll('.periode-box');
+            const newId = periodes.length > 0 ? Math.max(...Array.from(periodes).map(p => parseInt(p.getAttribute('data-id')))) + 1 : 1;
+            
+            const newPeriode = document.createElement('div');
+            newPeriode.className = 'periode-box';
+            newPeriode.setAttribute('data-id', newId);
+            newPeriode.innerHTML = `
+                <div class="periode-header">
+                    <h3>Période ${newId}</h3>
+                    <button class="btn btn-danger btn-sm btn-delete-periode">Supprimer</button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Date début</label>
+                            <input type="date" class="form-input" name="dateDebut">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">Date fin</label>
+                            <input type="date" class="form-input" name="dateFin">
+                        </div>
+                    </div>
+                </div>
+                
+                <h4>Studio Avant</h4>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Index début ECS</label>
+                        <input type="number" class="form-input" name="studioAvant.indexDebutECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin ECS</label>
+                        <input type="number" class="form-input" name="studioAvant.indexFinECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. ECS</label>
+                        <input type="text" class="form-input" name="studioAvant.consoECS" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début eau froide</label>
+                        <input type="number" class="form-input" name="studioAvant.indexDebutEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin eau froide</label>
+                        <input type="number" class="form-input" name="studioAvant.indexFinEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. eau froide</label>
+                        <input type="text" class="form-input" name="studioAvant.consoEauFroide" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début chauffage</label>
+                        <input type="number" class="form-input" name="studioAvant.indexDebutChauffage" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin chauffage</label>
+                        <input type="number" class="form-input" name="studioAvant.indexFinChauffage" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. chauffage</label>
+                        <input type="text" class="form-input" name="studioAvant.consoChauffage" value="0.00" disabled>
+                    </div>
+                </div>
+                
+                <h4>Studio Arrière</h4>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Index début ECS</label>
+                        <input type="number" class="form-input" name="studioArriere.indexDebutECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin ECS</label>
+                        <input type="number" class="form-input" name="studioArriere.indexFinECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. ECS</label>
+                        <input type="text" class="form-input" name="studioArriere.consoECS" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début eau froide</label>
+                        <input type="number" class="form-input" name="studioArriere.indexDebutEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin eau froide</label>
+                        <input type="number" class="form-input" name="studioArriere.indexFinEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. eau froide</label>
+                        <input type="text" class="form-input" name="studioArriere.consoEauFroide" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début chauffage</label>
+                        <input type="number" class="form-input" name="studioArriere.indexDebutChauffage" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin chauffage</label>
+                        <input type="number" class="form-input" name="studioArriere.indexFinChauffage" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. chauffage</label>
+                        <input type="text" class="form-input" name="studioArriere.consoChauffage" value="0.00" disabled>
+                    </div>
+                </div>
+                
+                <h4>Maison Gauche</h4>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Index début ECS</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexDebutECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin ECS</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexFinECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. ECS</label>
+                        <input type="text" class="form-input" name="maisonGauche.consoECS" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début eau froide</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexDebutEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin eau froide</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexFinEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. eau froide</label>
+                        <input type="text" class="form-input" name="maisonGauche.consoEauFroide" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début chauffage sol</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexDebutChauffageSol" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin chauffage sol</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexFinChauffageSol" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. chauffage sol</label>
+                        <input type="text" class="form-input" name="maisonGauche.consoChauffageSol" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début radiateurs</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexDebutRadiateurs" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin radiateurs</label>
+                        <input type="number" class="form-input" name="maisonGauche.indexFinRadiateurs" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. radiateurs</label>
+                        <input type="text" class="form-input" name="maisonGauche.consoRadiateurs" value="0.00" disabled>
+                    </div>
+                </div>
+                
+                <h4>Maison Droite</h4>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Index début ECS</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexDebutECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin ECS</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexFinECS" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. ECS</label>
+                        <input type="text" class="form-input" name="maisonDroite.consoECS" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début eau froide</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexDebutEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin eau froide</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexFinEauFroide" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. eau froide</label>
+                        <input type="text" class="form-input" name="maisonDroite.consoEauFroide" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début chauffage sol</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexDebutChauffageSol" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin chauffage sol</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexFinChauffageSol" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. chauffage sol</label>
+                        <input type="text" class="form-input" name="maisonDroite.consoChauffageSol" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début radiateurs</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexDebutRadiateurs" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin radiateurs</label>
+                        <input type="number" class="form-input" name="maisonDroite.indexFinRadiateurs" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. radiateurs</label>
+                        <input type="text" class="form-input" name="maisonDroite.consoRadiateurs" value="0.00" disabled>
+                    </div>
+                </div>
+                
+                <h4>Boiler & Chaudière</h4>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Index début boiler</label>
+                        <input type="number" class="form-input" name="boiler.indexDebut" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin boiler</label>
+                        <input type="number" class="form-input" name="boiler.indexFin" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. boiler</label>
+                        <input type="text" class="form-input" name="boiler.conso" value="0.00" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index début mazout</label>
+                        <input type="number" class="form-input" name="chaudiereMazout.indexDebut" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Index fin mazout</label>
+                        <input type="number" class="form-input" name="chaudiereMazout.indexFin" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Conso. mazout</label>
+                        <input type="text" class="form-input" name="chaudiereMazout.conso" value="0.00" disabled>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newPeriode);
+            attachEventListeners();
+        }
+        
+        // Fonction pour supprimer un élément
+        function handleDelete(e) {
+            if (e.target.classList.contains('btn-delete')) {
+                const row = e.target.closest('tr');
+                row.parentNode.removeChild(row);
+                updateData();
+            } else if (e.target.classList.contains('btn-delete-periode')) {
+                const periode = e.target.closest('.periode-box');
+                periode.parentNode.removeChild(periode);
+                updateData();
+            }
+        }
+        
+        // Fonction pour changer d'onglet
+        function changeTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            document.querySelectorAll('[id^="section-"]').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById('section-' + tabId).classList.remove('hidden');
+        }
+        
+        // Fonction pour attacher les écouteurs d'événements
+        function attachEventListeners() {
+            // Boutons d'ajout
+            document.getElementById('btn-add-mazout').addEventListener('click', ajouterFactureMazout);
+            document.getElementById('btn-add-eau').addEventListener('click', ajouterFactureEauChaude);
+            document.getElementById('btn-add-charges').addEventListener('click', ajouterChargeFixes);
+            document.getElementById('btn-add-periode').addEventListener('click', ajouterPeriode);
+            
+            // Boutons de suppression
+            document.addEventListener('click', handleDelete);
+            
+            // Onglets
+            document.getElementById('tab-saisie').addEventListener('click', () => changeTab('saisie'));
+            document.getElementById('tab-resultats').addEventListener('click', () => {
+                updateData();
+                changeTab('resultats');
+            });
+            
+            // Bouton d'impression
+            document.getElementById('btn-imprimer').addEventListener('click', () => {
+                window.print();
+            });
+            
+            // Mise à jour des prix unitaires et consommations sur changement
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    updateData();
+                });
+            });
+            
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    updateData();
+                });
+            });
+        }
+        
+        // Fonction pour mettre à jour toutes les données
+        function updateData() {
+            collectFormData();
+            updatePrixUnitaires();
+            updateConsommations();
+            calculerCharges();
+        }
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            attachEventListeners();
+            updatePrixUnitaires();
+            updateConsommations();
+            calculerCharges();
+        });
+    </script>
+</body>
+</html>
